@@ -3,6 +3,7 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "hardhat/console.sol";
 
 error NftMarketplace__NoProceeds();
 error NftMarketplace__TransferFailed();
@@ -39,6 +40,12 @@ contract NftMarketplace is ReentrancyGuard {
         uint256 indexed tokenId
     );
 
+    event ItemUpdated(
+        address indexed seller,
+        address indexed nft,
+        uint256 indexed tokenId,
+        uint256 newPrice
+    );
     //NFT Address -> NFT token id -> Listing
     mapping(address => mapping(uint256 => Listing)) private s_listings;
 
@@ -140,7 +147,7 @@ contract NftMarketplace is ReentrancyGuard {
         isListed(nftAddress, tokenId)
     {
         s_listings[nftAddress][tokenId].price = newPrice;
-        emit ItemListed(msg.sender, nftAddress, tokenId, newPrice);
+        emit ItemUpdated(msg.sender, nftAddress, tokenId, newPrice);
     }
 
     function withdrawProceeds() external
